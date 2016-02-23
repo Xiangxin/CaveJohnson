@@ -1,1 +1,6 @@
 __pycache__
+build/
+cavejohnson.egg-info/
+*.pyc
+dist/
+

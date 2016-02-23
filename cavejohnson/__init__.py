@@ -240,10 +240,9 @@ def github_auth():
     password = ''
     while not password:
         password = getpass('Password for {0}: '.format(user))
-    note = 'cavejohnson, teaching Xcode 6 CI new tricks'
-    note_url = 'http://sealedabstract.com'
+    note = 'cavejohnson get commit message'
     scopes = ['repo:status', 'repo']
-    auth = authorize(user, password, scopes, note, note_url)
+    auth = authorize(user, password, scopes, note)
 
     with open(CREDENTIALS_FILE, "w") as f:
         f.write(auth.token)
@@ -262,7 +261,7 @@ def get_git_directory():
     assert False
 
 def is_git_directory(path = '.'):
-    return subprocess.call(['git', '-C', path, 'status'], stderr=subprocess.STDOUT, stdout = open(os.devnull, 'w')) == 0    
+    return subprocess.call(['git', '-C', path, 'status'], stderr=subprocess.STDOUT, stdout = open(os.devnull, 'w')) == 0
 
 def get_repo_sha(repo):
     sha = subprocess.check_output(['git', 'rev-parse', 'HEAD'], cwd=repo).decode('ascii').strip()
@@ -385,7 +384,7 @@ def get_commit_log():
     token = github_auth()
     import github3
     gh = github3.login(token=token)
-    (owner, reponame) = get_repo().split("/")
+    (_, owner, reponame) = get_repo().split("/")
     r = gh.repository(owner, reponame)
     if not r:
 
@@ -462,6 +461,9 @@ def getGithubRepo(args):
 
 def getSha(args):
     print(get_sha())
+
+def getCommitLog(args):
+    print(get_commit_log())
 
 def setGithubAuthToken(args):
     whoami = subprocess.check_output(["whoami"]).strip().decode("utf-8")
@@ -540,6 +542,9 @@ def main_func():
 
     parser_getsha = subparsers.add_parser('getSha', help="Detects the git sha of what is being integrated")
     parser_getsha.set_defaults(func=getSha)
+
+    parser_getcommitlog = subparsers.add_parser('getCommitLog', help="Get the message of the latest commit")
+    parser_getcommitlog.set_defaults(func=getCommitLog)
 
     parser_authenticate = subparsers.add_parser('setGithubCredentials', help="Sets the credentials that will be used to talk to GitHub.")
     parser_authenticate.set_defaults(func=setGithubCredentials)
