@@ -390,8 +390,7 @@ def get_commit_log():
 
         raise Exception("Trouble getting a repository for %s and %s" % (owner, reponame))
     commit = r.git_commit(get_sha())
-    return commit.to_json()["message"]
-
+    return commit.to_json()["message"].split("\n\n")[0]
 
 class HockeyAppNotificationType(enum.Enum):
     dont_notify = 0
