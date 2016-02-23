@@ -5,6 +5,7 @@ import re
 import sys
 import subprocess
 import enum
+import json
 
 __version__ = "1.2"
 
@@ -379,6 +380,11 @@ def get_integration_url():
 def get_botname():
     return os.environ["XCS_BOT_NAME"]
 
+def getCommitMessage(args):
+    print(json.loads(args.commit)["message"].split("\n\n")[0])
+
+def getCommitUserName(args):
+    print(json.loads(args.commit)['committer']['name'])
 
 def get_commit_log():
     token = github_auth()
@@ -390,7 +396,7 @@ def get_commit_log():
 
         raise Exception("Trouble getting a repository for %s and %s" % (owner, reponame))
     commit = r.git_commit(get_sha())
-    return commit.to_json()["message"].split("\n\n")[0]
+    return json.dumps(commit.to_json())
 
 class HockeyAppNotificationType(enum.Enum):
     dont_notify = 0
@@ -542,8 +548,16 @@ def main_func():
     parser_getsha = subparsers.add_parser('getSha', help="Detects the git sha of what is being integrated")
     parser_getsha.set_defaults(func=getSha)
 
-    parser_getcommitlog = subparsers.add_parser('getCommitLog', help="Get the message of the latest commit")
+    parser_getcommitlog = subparsers.add_parser('getCommitLog', help="Get the commit object of the latest commit")
     parser_getcommitlog.set_defaults(func=getCommitLog)
+
+    parser_getcommitMessage = subparsers.add_parser('getCommitMessage', help="Get the message of the latest commit")
+    parser_getcommitMessage.add_argument("--commit", default=None, help="Raw commit object")
+    parser_getcommitMessage.set_defaults(func=getCommitMessage)
+
+    parser_getcommitUserName = subparsers.add_parser('getCommitUserName', help="Get the committer of the latest commit")
+    parser_getcommitUserName.add_argument("--commit", default=None, help="Raw commit object")
+    parser_getcommitUserName.set_defaults(func=getCommitUserName)
 
     parser_authenticate = subparsers.add_parser('setGithubCredentials', help="Sets the credentials that will be used to talk to GitHub.")
     parser_authenticate.set_defaults(func=setGithubCredentials)
