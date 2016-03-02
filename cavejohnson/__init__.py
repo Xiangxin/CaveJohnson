@@ -390,8 +390,9 @@ def get_commit_log():
     token = github_auth()
     import github3
     gh = github3.login(token=token)
+    repo = get_repo()
     print("repo:", repo)
-    (owner, reponame) = get_repo().split("/")
+    (owner, reponame) = repo.split("/")
     r = gh.repository(owner, reponame)
     if not r:
 
