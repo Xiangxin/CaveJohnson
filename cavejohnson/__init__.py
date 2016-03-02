@@ -296,7 +296,7 @@ def get_repo():
     repo = repo.replace("\/", "/")
     assert repo[-4:] == ".git"
     repo = repo[:-4]
-    return repo
+    return repo.strip("/")
 
 def get_repo_from_log():
     sourceLogPath = os.path.join(os.environ["XCS_OUTPUT_DIR"], "sourceControl.log")
@@ -390,7 +390,8 @@ def get_commit_log():
     token = github_auth()
     import github3
     gh = github3.login(token=token)
-    (_, owner, reponame) = get_repo().split("/")
+    print("repo:", repo)
+    (owner, reponame) = get_repo().split("/")
     r = gh.repository(owner, reponame)
     if not r:
 

@@ -3,4 +3,5 @@ build/
 cavejohnson.egg-info/
 *.pyc
 dist/
+.DS_Store
 
